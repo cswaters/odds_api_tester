@@ -1,0 +1,186 @@
+/* JSON Tree Viewer Styles */
+.json-tree-viewer {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    overflow: auto;
+    max-height: 600px;
+    border: 1px solid var(--medium-gray);
+}
+
+.json-tree-viewer ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    margin-left: 20px;
+}
+
+.json-tree-viewer > ul {
+    margin-left: 0;
+}
+
+.json-tree-viewer li {
+    position: relative;
+    margin: 2px 0;
+}
+
+.collapsible {
+    cursor: pointer;
+    user-select: none;
+}
+
+.collapsible::before {
+    content: '▼';
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 10px;
+    transition: transform 0.2s;
+}
+
+.collapsible.collapsed::before {
+    transform: rotate(-90deg);
+}
+
+.property-key {
+    color: #881391;
+    margin-right: 5px;
+}
+
+.property-colon {
+    margin-right: 5px;
+}
+
+.property-value {
+    position: relative;
+}
+
+.string-value {
+    color: #1a1aa6;
+}
+
+.number-value {
+    color: #1c00cf;
+}
+
+.boolean-value {
+    color: #0d904f;
+}
+
+.null-value {
+    color: #808080;
+}
+
+.copy-path, .copy-value {
+    visibility: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px 5px;
+    font-size: 10px;
+    cursor: pointer;
+    color: #333;
+    z-index: 10;
+}
+
+.property-value:hover .copy-path,
+.property-value:hover .copy-value {
+    visibility: visible;
+}
+
+.copy-path {
+    right: 60px;
+}
+
+.json-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.json-controls button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.json-controls button:hover {
+    background-color: #5a6268;
+}
+
+/* Special styling for copy JSON button */
+#copyJsonButton {
+    background-color: #17a2b8;
+}
+
+#copyJsonButton:hover {
+    background-color: #138496;
+}
+
+/* Special styling for raw view button */
+#rawJsonButton {
+    background-color: #6c757d;
+}
+
+#rawJsonButton:hover {
+    background-color: #5a6268;
+}
+
+.json-search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.json-search-container input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.json-search-container button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.json-search-container button:hover {
+    background-color: #5a6268;
+}
+
+.search-highlight {
+    background-color: #ffeb3b;
+}
+
+.search-current {
+    background-color: #ff9800;
+}
+
+#resultsData {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    white-space: pre-wrap;
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: var(--border-radius);
+    overflow: auto;
+    max-height: 600px;
+    border: 1px solid var(--medium-gray);
+} 

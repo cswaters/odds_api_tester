@@ -1,0 +1,230 @@
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="datetime-local"],
+.form-group select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--medium-gray);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.api-key-container {
+    position: relative;
+}
+
+.hide-show-btn {
+    position: absolute;
+    right: 0;
+    top: 28px;
+    background: none;
+    color: var(--primary-color);
+    border: none;
+    cursor: pointer;
+    padding: 8px 10px;
+}
+
+.hide-show-btn:hover {
+    color: var(--secondary-color);
+    background: none;
+}
+
+.parameter-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: flex-end;
+}
+
+.parameter-row select,
+.parameter-row input {
+    flex: 1;
+}
+
+.parameter-row button {
+    flex-shrink: 0;
+}
+
+#endpoint-description {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+#regionContainer,
+#marketContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.region-checkbox,
+.market-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.region-checkbox input,
+.market-checkbox input {
+    margin-right: 5px;
+}
+
+.region-checkbox label,
+.market-checkbox label {
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+details {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: var(--light-gray);
+    border-radius: var(--border-radius);
+}
+
+summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--secondary-color);
+}
+
+details p {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+small {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+    font-size: 12px;
+}
+
+#additionalParams {
+    margin-top: 15px;
+}
+
+.add-param-btn {
+    margin-top: 10px;
+    background-color: #5a6268;
+}
+
+.add-param-btn:hover {
+    background-color: #4a5258;
+}
+
+/* Format options styling */
+#formatOptionsContainer .parameter-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+#formatOptionsContainer .parameter-row > div {
+    flex: 1;
+}
+
+#formatOptionsContainer select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+/* Copy URL button styling */
+#copyUrlButton {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+#copyUrlButton:hover {
+    background-color: #5a6268;
+}
+
+/* Improve general button styling */
+button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #5a6268;
+}
+
+/* Special styling for remove buttons */
+.remove-param-btn {
+    background-color: #dc3545;
+    opacity: 0.8;
+}
+
+.remove-param-btn:hover {
+    background-color: #c82333;
+    opacity: 1;
+}
+
+/* Send Request button - slightly more prominent */
+#sendRequest {
+    background-color: #007bff;
+}
+
+#sendRequest:hover {
+    background-color: #0069d9;
+}
+
+/* Add this if you want to keep the accordion buttons with their original styling */
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+    font-weight: normal;
+}
+
+.accordion:hover {
+    background-color: #ddd;
+}
+
+.accordion.active {
+    background-color: #ccc;
+} 

@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Odds API Tester</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/accordion.css">
+    <link rel="stylesheet" href="css/json-viewer.css">
+</head>
+<body>
+    <div class="container">
+        <h1>The Odds API Tester</h1>
+        
+        <div class="main-tabs">
+            <button class="main-tab-button active" onclick="switchTab('config-panel', this)">API Configuration</button>
+            <button class="main-tab-button" onclick="switchTab('reference-panel', this)">API Reference</button>
+        </div>
+        
+        <div id="config-panel" class="main-tab-content active">
+            <h2>API Configuration</h2>
+            
+            <div class="form-group api-key-container">
+                <label for="apiKey">API Key:</label>
+                <input type="password" id="apiKey" placeholder="Enter your API key">
+                <button class="hide-show-btn" id="toggleApiKey">Show</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="endpoint">Endpoint:</label>
+                <select id="endpoint">
+                    <option value="">-- Select an Endpoint --</option>
+                    <option value="sports">GET sports</option>
+                    <option value="odds">GET odds</option>
+                    <option value="scores">GET scores</option>
+                    <option value="events">GET events</option>
+                    <option value="event_odds">GET event odds</option>
+                    <option value="participants">GET participants</option>
+                    <option value="historical_odds">GET historical odds</option>
+                    <option value="historical_events">GET historical events</option>
+                    <option value="historical_event_odds">GET historical event odds</option>
+                </select>
+                <div id="endpoint-description"></div>
+            </div>
+            
+            <div id="sportContainer" class="form-group hidden">
+                <label for="sport">Sport:</label>
+                <select id="sport">
+                    <option value="">-- Select a Sport --</option>
+                    <option value="upcoming">upcoming</option>
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+            
+            <div id="eventIdContainer" class="form-group hidden">
+                <label for="eventId">Event ID:</label>
+                <input type="text" id="eventId" placeholder="Enter event ID">
+                <button id="fetchEvents">Fetch Available Events</button>
+            </div>
+            
+            <div id="regionsContainer" class="form-group hidden">
+                <label>Regions:</label>
+                <div id="regionContainer">
+                    <div class="region-checkbox">
+                        <input type="checkbox" id="region-us" value="us">
+                        <label for="region-us">US</label>
+                    </div>
+                    <div class="region-checkbox">
+                        <input type="checkbox" id="region-us2" value="us2">
+                        <label for="region-us2">US2</label>
+                    </div>
+                    <div class="region-checkbox">
+                        <input type="checkbox" id="region-us_dfs" value="us_dfs">
+                        <label for="region-us_dfs">US DFS</label>
+                    </div>
+                    <div class="region-checkbox">
+                        <input type="checkbox" id="region-uk" value="uk">
+                        <label for="region-uk">UK</label>
+                    </div>
+                    <div class="region-checkbox">
+                        <input type="checkbox" id="region-eu" value="eu">
+                        <label for="region-eu">EU</label>
+                    </div>
+                    <div class="region-checkbox">
+                        <input type="checkbox" id="region-au" value="au">
+                        <label for="region-au">AU</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="marketsContainer" class="form-group hidden">
+                <label>Markets:</label>
+                <div class="form-group">
+                    <input type="text" id="marketSearch" placeholder="Search markets..." style="margin-bottom: 10px;">
+                </div>
+                <div id="marketContainer">
+                    <!-- Featured Markets -->
+                    <button class="accordion active">Featured Markets</button>
+                    <div class="panel" style="max-height: 500px;">
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h" value="h2h">
+                            <label for="market-h2h">Head to Head / Moneyline</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-spreads" value="spreads">
+                            <label for="market-spreads">Spreads / Handicap</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-totals" value="totals">
+                            <label for="market-totals">Totals / Over-Under</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-outrights" value="outrights">
+                            <label for="market-outrights">Outrights / Futures</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_lay" value="h2h_lay">
+                            <label for="market-h2h_lay">H2H Lay (Exchanges)</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-outrights_lay" value="outrights_lay">
+                            <label for="market-outrights_lay">Outrights Lay (Exchanges)</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Markets -->
+                    <button class="accordion">Additional Markets</button>
+                    <div class="panel">
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-alternate_spreads" value="alternate_spreads">
+                            <label for="market-alternate_spreads">Alternate Spreads</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-alternate_totals" value="alternate_totals">
+                            <label for="market-alternate_totals">Alternate Totals</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-btts" value="btts">
+                            <label for="market-btts">Both Teams to Score</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-draw_no_bet" value="draw_no_bet">
+                            <label for="market-draw_no_bet">Draw No Bet</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_3_way" value="h2h_3_way">
+                            <label for="market-h2h_3_way">H2H 3-Way</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-team_totals" value="team_totals">
+                            <label for="market-team_totals">Team Totals</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-alternate_team_totals" value="alternate_team_totals">
+                            <label for="market-alternate_team_totals">Alternate Team Totals</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-double_chance" value="double_chance">
+                            <label for="market-double_chance">Double Chance</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-alternate_spreads_corners" value="alternate_spreads_corners">
+                            <label for="market-alternate_spreads_corners">Handicap Corners</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-alternate_totals_corners" value="alternate_totals_corners">
+                            <label for="market-alternate_totals_corners">Total Corners</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-alternate_spreads_cards" value="alternate_spreads_cards">
+                            <label for="market-alternate_spreads_cards">Handicap Cards/Bookings</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-alternate_totals_cards" value="alternate_totals_cards">
+                            <label for="market-alternate_totals_cards">Total Cards/Bookings</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Period Markets -->
+                    <button class="accordion">Period Markets</button>
+                    <div class="panel">
+                        <!-- Quarter Markets -->
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_q1" value="h2h_q1">
+                            <label for="market-h2h_q1">H2H 1st Quarter</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_q2" value="h2h_q2">
+                            <label for="market-h2h_q2">H2H 2nd Quarter</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_q3" value="h2h_q3">
+                            <label for="market-h2h_q3">H2H 3rd Quarter</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_q4" value="h2h_q4">
+                            <label for="market-h2h_q4">H2H 4th Quarter</label>
+                        </div>
+                        
+                        <!-- Half Markets -->
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_h1" value="h2h_h1">
+                            <label for="market-h2h_h1">H2H 1st Half</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_h2" value="h2h_h2">
+                            <label for="market-h2h_h2">H2H 2nd Half</label>
+                        </div>
+                        
+                        <!-- Period Markets (Hockey) -->
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_p1" value="h2h_p1">
+                            <label for="market-h2h_p1">H2H 1st Period</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_p2" value="h2h_p2">
+                            <label for="market-h2h_p2">H2H 2nd Period</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_p3" value="h2h_p3">
+                            <label for="market-h2h_p3">H2H 3rd Period</label>
+                        </div>
+                        
+                        <!-- 3-Way Period Markets -->
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_3_way_q1" value="h2h_3_way_q1">
+                            <label for="market-h2h_3_way_q1">3-Way 1st Quarter</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_3_way_h1" value="h2h_3_way_h1">
+                            <label for="market-h2h_3_way_h1">3-Way 1st Half</label>
+                        </div>
+                        
+                        <!-- Spreads Period Markets -->
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-spreads_q1" value="spreads_q1">
+                            <label for="market-spreads_q1">Spreads 1st Quarter</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-spreads_h1" value="spreads_h1">
+                            <label for="market-spreads_h1">Spreads 1st Half</label>
+                        </div>
+                        
+                        <!-- Totals Period Markets -->
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-totals_q1" value="totals_q1">
+                            <label for="market-totals_q1">Totals 1st Quarter</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-totals_h1" value="totals_h1">
+                            <label for="market-totals_h1">Totals 1st Half</label>
+                        </div>
+                        
+                        <!-- Team Totals Period Markets -->
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-team_totals_h1" value="team_totals_h1">
+                            <label for="market-team_totals_h1">Team Totals 1st Half</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-team_totals_q1" value="team_totals_q1">
+                            <label for="market-team_totals_q1">Team Totals 1st Quarter</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Baseball Innings Markets -->
+                    <button class="accordion">Baseball Innings Markets</button>
+                    <div class="panel">
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_1st_1_innings" value="h2h_1st_1_innings">
+                            <label for="market-h2h_1st_1_innings">H2H 1st Inning</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-h2h_1st_5_innings" value="h2h_1st_5_innings">
+                            <label for="market-h2h_1st_5_innings">H2H 1st 5 Innings</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-spreads_1st_5_innings" value="spreads_1st_5_innings">
+                            <label for="market-spreads_1st_5_innings">Spreads 1st 5 Innings</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-totals_1st_5_innings" value="totals_1st_5_innings">
+                            <label for="market-totals_1st_5_innings">Totals 1st 5 Innings</label>
+                        </div>
+                    </div>
+                    
+                    <!-- NFL Player Props -->
+                    <button class="accordion">NFL Player Props</button>
+                    <div class="panel">
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_pass_tds" value="player_pass_tds">
+                            <label for="market-player_pass_tds">Player Pass TDs</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_pass_yds" value="player_pass_yds">
+                            <label for="market-player_pass_yds">Player Pass Yards</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_rush_yds" value="player_rush_yds">
+                            <label for="market-player_rush_yds">Player Rush Yards</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_reception_yds" value="player_reception_yds">
+                            <label for="market-player_reception_yds">Player Reception Yards</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_anytime_td" value="player_anytime_td">
+                            <label for="market-player_anytime_td">Player Anytime TD</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_receptions" value="player_receptions">
+                            <label for="market-player_receptions">Player Receptions</label>
+                        </div>
+                    </div>
+                    
+                    <!-- NBA Player Props -->
+                    <button class="accordion">NBA Player Props</button>
+                    <div class="panel">
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_points" value="player_points">
+                            <label for="market-player_points">Player Points</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_rebounds" value="player_rebounds">
+                            <label for="market-player_rebounds">Player Rebounds</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_assists" value="player_assists">
+                            <label for="market-player_assists">Player Assists</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_threes" value="player_threes">
+                            <label for="market-player_threes">Player Threes</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_points_rebounds_assists" value="player_points_rebounds_assists">
+                            <label for="market-player_points_rebounds_assists">Player Points+Rebounds+Assists</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_double_double" value="player_double_double">
+                            <label for="market-player_double_double">Player Double Double</label>
+                        </div>
+                    </div>
+                    
+                    <!-- MLB Player Props -->
+                    <button class="accordion">MLB Player Props</button>
+                    <div class="panel">
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-pitcher_strikeouts" value="pitcher_strikeouts">
+                            <label for="market-pitcher_strikeouts">Pitcher Strikeouts</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-batter_hits" value="batter_hits">
+                            <label for="market-batter_hits">Batter Hits</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-batter_home_runs" value="batter_home_runs">
+                            <label for="market-batter_home_runs">Batter Home Runs</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-batter_total_bases" value="batter_total_bases">
+                            <label for="market-batter_total_bases">Batter Total Bases</label>
+                        </div>
+                    </div>
+                    
+                    <!-- NHL Player Props -->
+                    <button class="accordion">NHL Player Props</button>
+                    <div class="panel">
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_goals" value="player_goals">
+                            <label for="market-player_goals">Player Goals</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_shots_on_goal" value="player_shots_on_goal">
+                            <label for="market-player_shots_on_goal">Player Shots on Goal</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_goal_scorer_anytime" value="player_goal_scorer_anytime">
+                            <label for="market-player_goal_scorer_anytime">Player Anytime Goal Scorer</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Soccer Player Props -->
+                    <button class="accordion">Soccer Player Props</button>
+                    <div class="panel">
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_goal_scorer_anytime" value="player_goal_scorer_anytime">
+                            <label for="market-player_goal_scorer_anytime">Player Anytime Goal Scorer</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_shots_on_target" value="player_shots_on_target">
+                            <label for="market-player_shots_on_target">Player Shots on Target</label>
+                        </div>
+                        <div class="market-checkbox">
+                            <input type="checkbox" id="market-player_to_receive_card" value="player_to_receive_card">
+                            <label for="market-player_to_receive_card">Player to Receive Card</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Bookmakers Selection -->
+                    <button class="accordion">Bookmakers</button>
+                    <div class="panel">
+                        <div class="form-group">
+                            <label for="bookmakers">Specific Bookmakers (comma-separated):</label>
+                            <input type="text" id="bookmakers" placeholder="e.g. fanduel,draftkings,betmgm">
+                            <small>Leave empty to use regions instead. Every 10 bookmakers counts as 1 region for quota.</small>
+                        </div>
+                        
+                        <div class="market-checkbox">
+                            <details>
+                                <summary>US Bookmakers</summary>
+                                <p>betonlineag, betmgm, betrivers, betus, bovada, williamhill_us, draftkings, fanatics, fanduel, lowvig, mybookieag</p>
+                            </details>
+                        </div>
+                        <div class="market-checkbox">
+                            <details>
+                                <summary>US2 Bookmakers</summary>
+                                <p>ballybet, betanysports, betparx, espnbet, fliff, hardrockbet, windcreek</p>
+                            </details>
+                        </div>
+                        <div class="market-checkbox">
+                            <details>
+                                <summary>UK Bookmakers</summary>
+                                <p>sport888, betfair_ex_uk, betfair_sb_uk, betvictor, betway, boylesports, casumo, coral, grosvenor, ladbrokes_uk, leovegas, livescorebet, matchbook, paddypower, skybet, smarkets, unibet_uk, virginbet, williamhill</p>
+                            </details>
+                        </div>
+                        <div class="market-checkbox">
+                            <details>
+                                <summary>EU Bookmakers</summary>
+                                <p>onexbet, sport888, betclic, betanysports, betfair_ex_eu, betonlineag, betsson, betvictor, coolbet, everygame, gtbets, marathonbet, matchbook, mybookieag, nordicbet, pinnacle, suprabets, tipico_de, unibet_eu, williamhill, winamax_de, winamax_fr</p>
+                            </details>
+                        </div>
+                        <div class="market-checkbox">
+                            <details>
+                                <summary>AU Bookmakers</summary>
+                                <p>betfair_ex_au, betr_au, betright, boombet, ladbrokes_au, neds, playup, pointsbetau, sportsbet, tab, tabtouch, topsport, unibet</p>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="dateContainer" class="form-group hidden">
+                <label for="date">Date (ISO Format):</label>
+                <input type="datetime-local" id="date" placeholder="YYYY-MM-DDTHH:MM:SSZ">
+            </div>
+            
+            <div id="formatOptionsContainer" class="form-group hidden">
+                <label>Format Options:</label>
+                <div class="parameter-row">
+                    <div>
+                        <label for="dateFormat">Date Format:</label>
+                        <select id="dateFormat">
+                            <option value="iso">ISO</option>
+                            <option value="unix">Unix Timestamp</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="oddsFormat">Odds Format:</label>
+                        <select id="oddsFormat">
+                            <option value="decimal">Decimal</option>
+                            <option value="american">American</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="additionalParamsContainer" class="form-group hidden">
+                <label>Additional Parameters:</label>
+                <div id="additionalParams">
+                    <div class="parameter-row">
+                        <select class="param-name">
+                            <option value="">-- Select Parameter --</option>
+                            <option value="daysFrom">daysFrom</option>
+                            <option value="eventIds">eventIds</option>
+                            <option value="bookmakers">bookmakers</option>
+                            <option value="commenceTimeFrom">commenceTimeFrom</option>
+                            <option value="commenceTimeTo">commenceTimeTo</option>
+                            <option value="all">all</option>
+                            <option value="includeLinks">includeLinks</option>
+                            <option value="includeSids">includeSids</option>
+                            <option value="includeBetLimits">includeBetLimits</option>
+                        </select>
+                        <input type="text" class="param-value" placeholder="Parameter value">
+                        <button class="remove-param-btn">Remove</button>
+                    </div>
+                </div>
+                <button class="add-param-btn" id="addParam">Add Parameter</button>
+            </div>
+            
+            <button id="sendRequest">Send Request</button>
+        </div>
+        
+        <!-- Reference Tables Section -->
+        <div id="reference-panel" class="main-tab-content">
+            <h2>API Reference Tables</h2>
+            <p>Use these tables to quickly find codes for regions, bookmakers, and markets.</p>
+            
+            <div class="reference-tabs">
+                <button class="tab-button active" data-tab="regions-tab">Regions</button>
+                <button class="tab-button" data-tab="bookmakers-tab">Bookmakers</button>
+                <button class="tab-button" data-tab="markets-tab">Markets</button>
+                <button class="tab-button" data-tab="sports-tab">Sports</button>
+            </div>
+            
+            <div id="regions-tab" class="tab-content active">
+                <table class="reference-table">
+                    <thead>
+                        <tr>
+                            <th>Region Code</th>
+                            <th>Description</th>
+                            <th>Bookmakers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>us</td>
+                            <td>United States</td>
+                            <td>betonlineag, betmgm, betrivers, betus, bovada, williamhill_us, draftkings, fanatics, fanduel, lowvig, mybookieag</td>
+                        </tr>
+                        <tr>
+                            <td>us2</td>
+                            <td>United States (Secondary)</td>
+                            <td>ballybet, betanysports, betparx, espnbet, fliff, hardrockbet, windcreek</td>
+                        </tr>
+                        <tr>
+                            <td>us_dfs</td>
+                            <td>US Daily Fantasy Sports</td>
+                            <td>DFS-specific bookmakers</td>
+                        </tr>
+                        <tr>
+                            <td>uk</td>
+                            <td>United Kingdom</td>
+                            <td>sport888, betfair_ex_uk, betfair_sb_uk, betvictor, betway, boylesports, casumo, coral, grosvenor, ladbrokes_uk, leovegas, livescorebet, matchbook, paddypower, skybet, smarkets, unibet_uk, virginbet, williamhill</td>
+                        </tr>
+                        <tr>
+                            <td>eu</td>
+                            <td>Europe</td>
+                            <td>onexbet, sport888, betclic, betanysports, betfair_ex_eu, betonlineag, betsson, betvictor, coolbet, everygame, gtbets, marathonbet, matchbook, mybookieag, nordicbet, pinnacle, suprabets, tipico_de, unibet_eu, williamhill, winamax_de, winamax_fr</td>
+                        </tr>
+                        <tr>
+                            <td>au</td>
+                            <td>Australia</td>
+                            <td>betfair_ex_au, betr_au, betright, boombet, ladbrokes_au, neds, playup, pointsbetau, sportsbet, tab, tabtouch, topsport, unibet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="bookmakers-tab" class="tab-content">
+                <input type="text" id="bookmakerSearch" placeholder="Search bookmakers..." class="reference-search">
+                <table class="reference-table" id="bookmakersTable">
+                    <thead>
+                        <tr>
+                            <th>Bookmaker Code</th>
+                            <th>Name</th>
+                            <th>Regions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- US Bookmakers -->
+                        <tr><td>betonlineag</td><td>BetOnline.ag</td><td>us, eu</td></tr>
+                        <tr><td>betmgm</td><td>BetMGM</td><td>us</td></tr>
+                        <tr><td>betrivers</td><td>BetRivers</td><td>us</td></tr>
+                        <tr><td>betus</td><td>BetUS</td><td>us</td></tr>
+                        <tr><td>bovada</td><td>Bovada</td><td>us</td></tr>
+                        <tr><td>williamhill_us</td><td>William Hill (US)</td><td>us</td></tr>
+                        <tr><td>draftkings</td><td>DraftKings</td><td>us</td></tr>
+                        <tr><td>fanatics</td><td>Fanatics</td><td>us</td></tr>
+                        <tr><td>fanduel</td><td>FanDuel</td><td>us</td></tr>
+                        <tr><td>lowvig</td><td>LowVig.ag</td><td>us</td></tr>
+                        <tr><td>mybookieag</td><td>MyBookie.ag</td><td>us, eu</td></tr>
+                        
+                        <!-- US2 Bookmakers -->
+                        <tr><td>ballybet</td><td>Bally Bet</td><td>us2</td></tr>
+                        <tr><td>betanysports</td><td>BetAnySports</td><td>us2, eu</td></tr>
+                        <tr><td>betparx</td><td>betPARX</td><td>us2</td></tr>
+                        <tr><td>espnbet</td><td>ESPN BET</td><td>us2</td></tr>
+                        <tr><td>fliff</td><td>Fliff</td><td>us2</td></tr>
+                        <tr><td>hardrockbet</td><td>Hard Rock Bet</td><td>us2</td></tr>
+                        <tr><td>windcreek</td><td>Wind Creek</td><td>us2</td></tr>
+                        
+                        <!-- UK Bookmakers -->
+                        <tr><td>sport888</td><td>888sport</td><td>uk, eu</td></tr>
+                        <tr><td>betfair_ex_uk</td><td>Betfair Exchange (UK)</td><td>uk</td></tr>
+                        <tr><td>betfair_sb_uk</td><td>Betfair Sportsbook (UK)</td><td>uk</td></tr>
+                        <tr><td>betvictor</td><td>BetVictor</td><td>uk, eu</td></tr>
+                        <tr><td>betway</td><td>Betway</td><td>uk</td></tr>
+                        <tr><td>boylesports</td><td>BoyleSports</td><td>uk</td></tr>
+                        <tr><td>casumo</td><td>Casumo</td><td>uk</td></tr>
+                        <tr><td>coral</td><td>Coral</td><td>uk</td></tr>
+                        <tr><td>grosvenor</td><td>Grosvenor</td><td>uk</td></tr>
+                        <tr><td>ladbrokes_uk</td><td>Ladbrokes (UK)</td><td>uk</td></tr>
+                        <tr><td>leovegas</td><td>LeoVegas</td><td>uk</td></tr>
+                        <tr><td>livescorebet</td><td>LiveScore Bet</td><td>uk</td></tr>
+                        <tr><td>matchbook</td><td>Matchbook</td><td>uk, eu</td></tr>
+                        <tr><td>paddypower</td><td>Paddy Power</td><td>uk</td></tr>
+                        <tr><td>skybet</td><td>Sky Bet</td><td>uk</td></tr>
+                        <tr><td>smarkets</td><td>Smarkets</td><td>uk</td></tr>
+                        <tr><td>unibet_uk</td><td>Unibet (UK)</td><td>uk</td></tr>
+                        <tr><td>virginbet</td><td>Virgin Bet</td><td>uk</td></tr>
+                        <tr><td>williamhill</td><td>William Hill</td><td>uk, eu</td></tr>
+                        
+                        <!-- EU Bookmakers -->
+                        <tr><td>onexbet</td><td>1xBet</td><td>eu</td></tr>
+                        <tr><td>betclic</td><td>Betclic</td><td>eu</td></tr>
+                        <tr><td>betfair_ex_eu</td><td>Betfair Exchange (EU)</td><td>eu</td></tr>
+                        <tr><td>betsson</td><td>Betsson</td><td>eu</td></tr>
+                        <tr><td>coolbet</td><td>Coolbet</td><td>eu</td></tr>
+                        <tr><td>everygame</td><td>Everygame</td><td>eu</td></tr>
+                        <tr><td>gtbets</td><td>GTbets</td><td>eu</td></tr>
+                        <tr><td>marathonbet</td><td>Marathon Bet</td><td>eu</td></tr>
+                        <tr><td>nordicbet</td><td>NordicBet</td><td>eu</td></tr>
+                        <tr><td>pinnacle</td><td>Pinnacle</td><td>eu</td></tr>
+                        <tr><td>suprabets</td><td>Suprabets</td><td>eu</td></tr>
+                        <tr><td>tipico_de</td><td>Tipico (DE)</td><td>eu</td></tr>
+                        <tr><td>unibet_eu</td><td>Unibet (EU)</td><td>eu</td></tr>
+                        <tr><td>winamax_de</td><td>Winamax (DE)</td><td>eu</td></tr>
+                        <tr><td>winamax_fr</td><td>Winamax (FR)</td><td>eu</td></tr>
+                        
+                        <!-- AU Bookmakers -->
+                        <tr><td>betfair_ex_au</td><td>Betfair Exchange (AU)</td><td>au</td></tr>
+                        <tr><td>betr_au</td><td>Betr (AU)</td><td>au</td></tr>
+                        <tr><td>betright</td><td>BetRight</td><td>au</td></tr>
+                        <tr><td>boombet</td><td>Boombet</td><td>au</td></tr>
+                        <tr><td>ladbrokes_au</td><td>Ladbrokes (AU)</td><td>au</td></tr>
+                        <tr><td>neds</td><td>Neds</td><td>au</td></tr>
+                        <tr><td>playup</td><td>PlayUp</td><td>au</td></tr>
+                        <tr><td>pointsbetau</td><td>PointsBet (AU)</td><td>au</td></tr>
+                        <tr><td>sportsbet</td><td>Sportsbet</td><td>au</td></tr>
+                        <tr><td>tab</td><td>TAB</td><td>au</td></tr>
+                        <tr><td>tabtouch</td><td>TABtouch</td><td>au</td></tr>
+                        <tr><td>topsport</td><td>TopSport</td><td>au</td></tr>
+                        <tr><td>unibet</td><td>Unibet (AU)</td><td>au</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="markets-tab" class="tab-content">
+                <input type="text" id="marketSearch" placeholder="Search markets..." class="reference-search">
+                <table class="reference-table" id="marketsTable">
+                    <thead>
+                        <tr>
+                            <th>Market Code</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Featured Markets -->
+                        <tr><td>h2h</td><td>Head to Head / Moneyline</td><td>Featured</td></tr>
+                        <tr><td>spreads</td><td>Spreads / Handicap</td><td>Featured</td></tr>
+                        <tr><td>totals</td><td>Totals / Over-Under</td><td>Featured</td></tr>
+                        <tr><td>outrights</td><td>Outrights / Futures</td><td>Featured</td></tr>
+                        <tr><td>h2h_lay</td><td>H2H Lay (Exchanges)</td><td>Featured</td></tr>
+                        <tr><td>outrights_lay</td><td>Outrights Lay (Exchanges)</td><td>Featured</td></tr>
+                        
+                        <!-- Additional Markets -->
+                        <tr><td>alternate_spreads</td><td>Alternate Spreads</td><td>Additional</td></tr>
+                        <tr><td>alternate_totals</td><td>Alternate Totals</td><td>Additional</td></tr>
+                        <tr><td>btts</td><td>Both Teams to Score</td><td>Additional</td></tr>
+                        <tr><td>draw_no_bet</td><td>Draw No Bet</td><td>Additional</td></tr>
+                        <tr><td>h2h_3_way</td><td>H2H 3-Way</td><td>Additional</td></tr>
+                        <tr><td>team_totals</td><td>Team Totals</td><td>Additional</td></tr>
+                        <tr><td>alternate_team_totals</td><td>Alternate Team Totals</td><td>Additional</td></tr>
+                        <tr><td>double_chance</td><td>Double Chance</td><td>Additional</td></tr>
+                        <tr><td>alternate_spreads_corners</td><td>Handicap Corners</td><td>Additional</td></tr>
+                        <tr><td>alternate_totals_corners</td><td>Total Corners</td><td>Additional</td></tr>
+                        <tr><td>alternate_spreads_cards</td><td>Handicap Cards/Bookings</td><td>Additional</td></tr>
+                        <tr><td>alternate_totals_cards</td><td>Total Cards/Bookings</td><td>Additional</td></tr>
+                        
+                        <!-- Period Markets -->
+                        <tr><td>h2h_q1</td><td>H2H 1st Quarter</td><td>Period</td></tr>
+                        <tr><td>h2h_q2</td><td>H2H 2nd Quarter</td><td>Period</td></tr>
+                        <tr><td>h2h_q3</td><td>H2H 3rd Quarter</td><td>Period</td></tr>
+                        <tr><td>h2h_q4</td><td>H2H 4th Quarter</td><td>Period</td></tr>
+                        <tr><td>h2h_h1</td><td>H2H 1st Half</td><td>Period</td></tr>
+                        <tr><td>h2h_h2</td><td>H2H 2nd Half</td><td>Period</td></tr>
+                        <tr><td>h2h_p1</td><td>H2H 1st Period</td><td>Period</td></tr>
+                        <tr><td>h2h_p2</td><td>H2H 2nd Period</td><td>Period</td></tr>
+                        <tr><td>h2h_p3</td><td>H2H 3rd Period</td><td>Period</td></tr>
+                        <tr><td>h2h_3_way_q1</td><td>3-Way 1st Quarter</td><td>Period</td></tr>
+                        <tr><td>h2h_3_way_h1</td><td>3-Way 1st Half</td><td>Period</td></tr>
+                        <tr><td>spreads_q1</td><td>Spreads 1st Quarter</td><td>Period</td></tr>
+                        <tr><td>spreads_h1</td><td>Spreads 1st Half</td><td>Period</td></tr>
+                        <tr><td>totals_q1</td><td>Totals 1st Quarter</td><td>Period</td></tr>
+                        <tr><td>totals_h1</td><td>Totals 1st Half</td><td>Period</td></tr>
+                        <tr><td>team_totals_h1</td><td>Team Totals 1st Half</td><td>Period</td></tr>
+                        <tr><td>team_totals_q1</td><td>Team Totals 1st Quarter</td><td>Period</td></tr>
+                        
+                        <!-- Baseball Innings Markets -->
+                        <tr><td>h2h_1st_1_innings</td><td>H2H 1st Inning</td><td>Baseball</td></tr>
+                        <tr><td>h2h_1st_5_innings</td><td>H2H 1st 5 Innings</td><td>Baseball</td></tr>
+                        <tr><td>spreads_1st_5_innings</td><td>Spreads 1st 5 Innings</td><td>Baseball</td></tr>
+                        <tr><td>totals_1st_5_innings</td><td>Totals 1st 5 Innings</td><td>Baseball</td></tr>
+                        
+                        <!-- NFL Player Props -->
+                        <tr><td>player_pass_tds</td><td>Player Pass TDs</td><td>NFL Props</td></tr>
+                        <tr><td>player_pass_yds</td><td>Player Pass Yards</td><td>NFL Props</td></tr>
+                        <tr><td>player_rush_yds</td><td>Player Rush Yards</td><td>NFL Props</td></tr>
+                        <tr><td>player_reception_yds</td><td>Player Reception Yards</td><td>NFL Props</td></tr>
+                        <tr><td>player_anytime_td</td><td>Player Anytime TD</td><td>NFL Props</td></tr>
+                        <tr><td>player_receptions</td><td>Player Receptions</td><td>NFL Props</td></tr>
+                        
+                        <!-- NBA Player Props -->
+                        <tr><td>player_points</td><td>Player Points</td><td>NBA Props</td></tr>
+                        <tr><td>player_rebounds</td><td>Player Rebounds</td><td>NBA Props</td></tr>
+                        <tr><td>player_assists</td><td>Player Assists</td><td>NBA Props</td></tr>
+                        <tr><td>player_threes</td><td>Player Threes</td><td>NBA Props</td></tr>
+                        <tr><td>player_points_rebounds_assists</td><td>Player Points+Rebounds+Assists</td><td>NBA Props</td></tr>
+                        <tr><td>player_double_double</td><td>Player Double Double</td><td>NBA Props</td></tr>
+                        
+                        <!-- MLB Player Props -->
+                        <tr><td>pitcher_strikeouts</td><td>Pitcher Strikeouts</td><td>MLB Props</td></tr>
+                        <tr><td>batter_hits</td><td>Batter Hits</td><td>MLB Props</td></tr>
+                        <tr><td>batter_home_runs</td><td>Batter Home Runs</td><td>MLB Props</td></tr>
+                        <tr><td>batter_total_bases</td><td>Batter Total Bases</td><td>MLB Props</td></tr>
+                        
+                        <!-- NHL Player Props -->
+                        <tr><td>player_goals</td><td>Player Goals</td><td>NHL Props</td></tr>
+                        <tr><td>player_shots_on_goal</td><td>Player Shots on Goal</td><td>NHL Props</td></tr>
+                        <tr><td>player_goal_scorer_anytime</td><td>Player Anytime Goal Scorer</td><td>NHL/Soccer Props</td></tr>
+                        
+                        <!-- Soccer Player Props -->
+                        <tr><td>player_shots_on_target</td><td>Player Shots on Target</td><td>Soccer Props</td></tr>
+                        <tr><td>player_to_receive_card</td><td>Player to Receive Card</td><td>Soccer Props</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="sports-tab" class="tab-content">
+                <input type="text" id="sportsSearch" placeholder="Search sports..." class="reference-search">
+                <table class="reference-table" id="sportsTable">
+                    <thead>
+                        <tr>
+                            <th>Group</th>
+                            <th>League / Tournament</th>
+                            <th>Sport Key</th>
+                            <th>Scores & Results</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- American Football -->
+                        <tr><td>American Football</td><td>CFL</td><td>americanfootball_cfl</td><td>✔</td></tr>
+                        <tr><td>American Football</td><td>NCAAF</td><td>americanfootball_ncaaf</td><td>✔</td></tr>
+                        <tr><td>American Football</td><td>NCAAF Championship Winner</td><td>americanfootball_ncaaf_championship_winner</td><td></td></tr>
+                        <tr><td>American Football</td><td>NFL</td><td>americanfootball_nfl</td><td>✔</td></tr>
+                        <tr><td>American Football</td><td>NFL Preseason</td><td>americanfootball_nfl_preseason</td><td>✔</td></tr>
+                        <tr><td>American Football</td><td>NFL Super Bowl Winner</td><td>americanfootball_nfl_super_bowl_winner</td><td></td></tr>
+                        <tr><td>American Football</td><td>UFL</td><td>americanfootball_ufl</td><td>✔</td></tr>
+                        
+                        <!-- Aussie Rules -->
+                        <tr><td>Aussie Rules</td><td>AFL</td><td>aussierules_afl</td><td>✔</td></tr>
+                        
+                        <!-- Baseball -->
+                        <tr><td>Baseball</td><td>MLB</td><td>baseball_mlb</td><td>✔</td></tr>
+                        <tr><td>Baseball</td><td>MLB Preseason</td><td>baseball_mlb_preseason</td><td></td></tr>
+                        <tr><td>Baseball</td><td>MLB World Series Winner</td><td>baseball_mlb_world_series_winner</td><td></td></tr>
+                        <tr><td>Baseball</td><td>Minor League Baseball</td><td>baseball_milb</td><td></td></tr>
+                        <tr><td>Baseball</td><td>NPB</td><td>baseball_npb</td><td></td></tr>
+                        <tr><td>Baseball</td><td>KBO League</td><td>baseball_kbo</td><td></td></tr>
+                        <tr><td>Baseball</td><td>NCAA Baseball</td><td>baseball_ncaa</td><td></td></tr>
+                        
+                        <!-- Basketball -->
+                        <tr><td>Basketball</td><td>Basketball Euroleague</td><td>basketball_euroleague</td><td>✔</td></tr>
+                        <tr><td>Basketball</td><td>NBA</td><td>basketball_nba</td><td>✔</td></tr>
+                        <tr><td>Basketball</td><td>NBA Championship Winner</td><td>basketball_nba_championship_winner</td><td></td></tr>
+                        <tr><td>Basketball</td><td>WNBA</td><td>basketball_wnba</td><td>✔</td></tr>
+                        <tr><td>Basketball</td><td>NCAAB</td><td>basketball_ncaab</td><td>✔</td></tr>
+                        <tr><td>Basketball</td><td>WNCAAB</td><td>basketball_wncaab</td><td></td></tr>
+                        <tr><td>Basketball</td><td>NCAAB Championship Winner</td><td>basketball_ncaab_championship_winner</td><td></td></tr>
+                        <tr><td>Basketball</td><td>NBL (Australia)</td><td>basketball_nbl</td><td></td></tr>
+                        
+                        <!-- Boxing -->
+                        <tr><td>Boxing</td><td>Boxing</td><td>boxing_boxing</td><td></td></tr>
+                        
+                        <!-- Cricket -->
+                        <tr><td>Cricket</td><td>Big Bash</td><td>cricket_big_bash</td><td></td></tr>
+                        <tr><td>Cricket</td><td>Caribbean Premier League</td><td>cricket_caribbean_premier_league</td><td></td></tr>
+                        <tr><td>Cricket</td><td>ICC Champions Trophy</td><td>cricket_icc_trophy</td><td></td></tr>
+                        <tr><td>Cricket</td><td>ICC World Cup</td><td>cricket_icc_world_cup</td><td></td></tr>
+                        <tr><td>Cricket</td><td>International Twenty20</td><td>cricket_international_t20</td><td></td></tr>
+                        <tr><td>Cricket</td><td>IPL</td><td>cricket_ipl</td><td></td></tr>
+                        <tr><td>Cricket</td><td>One Day Internationals</td><td>cricket_odi</td><td></td></tr>
+                        <tr><td>Cricket</td><td>Pakistan Super League</td><td>cricket_psl</td><td></td></tr>
+                        <tr><td>Cricket</td><td>T20 Blast</td><td>cricket_t20_blast</td><td></td></tr>
+                        <tr><td>Cricket</td><td>Test Matches</td><td>cricket_test_match</td><td></td></tr>
+                        
+                        <!-- Golf -->
+                        <tr><td>Golf</td><td>Masters Tournament Winner</td><td>golf_masters_tournament_winner</td><td></td></tr>
+                        <tr><td>Golf</td><td>PGA Championship Winner</td><td>golf_pga_championship_winner</td><td></td></tr>
+                        <tr><td>Golf</td><td>The Open Winner</td><td>golf_the_open_championship_winner</td><td></td></tr>
+                        <tr><td>Golf</td><td>US Open Winner</td><td>golf_us_open_winner</td><td></td></tr>
+                        
+                        <!-- Ice Hockey -->
+                        <tr><td>Ice Hockey</td><td>NHL</td><td>icehockey_nhl</td><td>✔</td></tr>
+                        <tr><td>Ice Hockey</td><td>AHL</td><td>icehockey_ahl</td><td></td></tr>
+                        <tr><td>Ice Hockey</td><td>NHL Championship Winner</td><td>icehockey_nhl_championship_winner</td><td></td></tr>
+                        <tr><td>Ice Hockey</td><td>Finnish Liiga</td><td>icehockey_liiga</td><td></td></tr>
+                        <tr><td>Ice Hockey</td><td>Finnish Mestis</td><td>icehockey_mestis</td><td></td></tr>
+                        <tr><td>Ice Hockey</td><td>SHL</td><td>icehockey_sweden_hockey_league</td><td></td></tr>
+                        <tr><td>Ice Hockey</td><td>HockeyAllsvenskan</td><td>icehockey_sweden_allsvenskan</td><td></td></tr>
+                        
+                        <!-- Lacrosse -->
+                        <tr><td>Lacrosse</td><td>Premier Lacrosse League</td><td>lacrosse_pll</td><td></td></tr>
+                        <tr><td>Lacrosse</td><td>NCAA Lacrosse</td><td>lacrosse_ncaa</td><td></td></tr>
+                        
+                        <!-- Mixed Martial Arts -->
+                        <tr><td>Mixed Martial Arts</td><td>MMA</td><td>mma_mixed_martial_arts</td><td></td></tr>
+                        
+                        <!-- Politics -->
+                        <tr><td>Politics</td><td>US Presidential Elections Winner</td><td>politics_us_presidential_election_winner</td><td></td></tr>
+                        
+                        <!-- Rugby League -->
+                        <tr><td>Rugby League</td><td>NRL</td><td>rugbyleague_nrl</td><td>✔</td></tr>
+                        
+                        <!-- Rugby Union -->
+                        <tr><td>Rugby Union</td><td>Six Nations</td><td>rugbyunion_six_nations</td><td></td></tr>
+                        
+                        <!-- Soccer -->
+                        <tr><td>Soccer</td><td>Africa Cup of Nations</td><td>soccer_africa_cup_of_nations</td><td></td></tr>
+                        <tr><td>Soccer</td><td>Primera División - Argentina</td><td>soccer_argentina_primera_division</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>A-League</td><td>soccer_australia_aleague</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Austrian Football Bundesliga</td><td>soccer_austria_bundesliga</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Belgium First Div</td><td>soccer_belgium_first_div</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Brazil Série A</td><td>soccer_brazil_campeonato</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Brazil Série B</td><td>soccer_brazil_serie_b</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Primera División - Chile</td><td>soccer_chile_campeonato</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Super League - China</td><td>soccer_china_superleague</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Denmark Superliga</td><td>soccer_denmark_superliga</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Championship</td><td>soccer_efl_champ</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>EFL Cup</td><td>soccer_england_efl_cup</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>League 1</td><td>soccer_england_league1</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>League 2</td><td>soccer_england_league2</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>EPL</td><td>soccer_epl</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>FA Cup</td><td>soccer_fa_cup</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>FIFA World Cup</td><td>soccer_fifa_world_cup</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>FIFA Women's World Cup</td><td>soccer_fifa_world_cup_womens</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>FIFA World Cup Winner</td><td>soccer_fifa_world_cup_winner</td><td></td></tr>
+                        <tr><td>Soccer</td><td>Veikkausliiga - Finland</td><td>soccer_finland_veikkausliiga</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Ligue 1 - France</td><td>soccer_france_ligue_one</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Ligue 2 - France</td><td>soccer_france_ligue_two</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Bundesliga - Germany</td><td>soccer_germany_bundesliga</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Bundesliga 2 - Germany</td><td>soccer_germany_bundesliga2</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>3. Liga - Germany</td><td>soccer_germany_liga3</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Super League - Greece</td><td>soccer_greece_super_league</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Serie A - Italy</td><td>soccer_italy_serie_a</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Serie B - Italy</td><td>soccer_italy_serie_b</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>J League</td><td>soccer_japan_j_league</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>K League 1</td><td>soccer_korea_kleague1</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>League of Ireland</td><td>soccer_league_of_ireland</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Liga MX</td><td>soccer_mexico_ligamx</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Dutch Eredivisie</td><td>soccer_netherlands_eredivisie</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Eliteserien - Norway</td><td>soccer_norway_eliteserien</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Ekstraklasa - Poland</td><td>soccer_poland_ekstraklasa</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Primeira Liga - Portugal</td><td>soccer_portugal_primeira_liga</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>La Liga - Spain</td><td>soccer_spain_la_liga</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>La Liga 2 - Spain</td><td>soccer_spain_segunda_division</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Premiership - Scotland</td><td>soccer_spl</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Allsvenskan - Sweden</td><td>soccer_sweden_allsvenskan</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Superettan - Sweden</td><td>soccer_sweden_superettan</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Swiss Superleague</td><td>soccer_switzerland_superleague</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Turkey Super League</td><td>soccer_turkey_super_league</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>UEFA Europa Conference League</td><td>soccer_uefa_europa_conference_league</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>UEFA Champions League</td><td>soccer_uefa_champs_league</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>UEFA Champions League Qualification</td><td>soccer_uefa_champs_league_qualification</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>UEFA Europa League</td><td>soccer_uefa_europa_league</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>UEFA Euro 2024</td><td>soccer_uefa_european_championship</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>UEFA Euro Qualification</td><td>soccer_uefa_euro_qualification</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>UEFA Nations League</td><td>soccer_uefa_nations_league</td><td></td></tr>
+                        <tr><td>Soccer</td><td>Copa América</td><td>soccer_conmebol_copa_america</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>Copa Libertadores</td><td>soccer_conmebol_copa_libertadores</td><td>✔</td></tr>
+                        <tr><td>Soccer</td><td>MLS</td><td>soccer_usa_mls</td><td>✔</td></tr>
+                        
+                        <!-- Tennis -->
+                        <tr><td>Tennis</td><td>ATP Australian Open</td><td>tennis_atp_aus_open_singles</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP Canadian Open</td><td>tennis_atp_canadian_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP China Open</td><td>tennis_atp_china_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP Cincinnati Open</td><td>tennis_atp_cincinnati_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP Dubai Championships</td><td>tennis_atp_dubai</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP French Open</td><td>tennis_atp_french_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP Indian Wells</td><td>tennis_atp_indian_wells</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP Paris Masters</td><td>tennis_atp_paris_masters</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP Qatar Open</td><td>tennis_atp_qatar_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP Shanghai Masters</td><td>tennis_atp_shanghai_masters</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP US Open</td><td>tennis_atp_us_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>ATP Wimbledon</td><td>tennis_atp_wimbledon</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA Australian Open</td><td>tennis_wta_aus_open_singles</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA Canadian Open</td><td>tennis_wta_canadian_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA China Open</td><td>tennis_wta_china_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA Cincinnati Open</td><td>tennis_wta_cincinnati_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA Dubai Championships</td><td>tennis_wta_dubai</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA French Open</td><td>tennis_wta_french_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA Indian Wells</td><td>tennis_wta_indian_wells</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA Qatar Open</td><td>tennis_wta_qatar_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA US Open</td><td>tennis_wta_us_open</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA Wimbledon</td><td>tennis_wta_wimbledon</td><td></td></tr>
+                        <tr><td>Tennis</td><td>WTA Wuhan Open</td><td>tennis_wta_wuhan_open</td><td></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="reference-note">
+                <strong>Note:</strong> For historical endpoints, you must specify at least one region or bookmaker. The API will return a 422 error if neither is provided.
+            </div>
+        </div>
+        
+        <div id="resultsPanel">
+            <div class="results-header">
+                <h3>Results</h3>
+                <button id="copyUrlButton">Copy URL</button>
+            </div>
+            <div id="loadingIndicator" class="hidden">Loading...</div>
+            <div id="resultsUrl"></div>
+            
+            <div class="json-controls">
+                <button id="expandAllButton">Expand All</button>
+                <button id="collapseAllButton">Collapse All</button>
+                <button id="copyJsonButton">Copy JSON</button>
+                <button id="rawJsonButton">Raw View</button>
+            </div>
+            
+            <div class="json-search-container">
+                <input type="text" id="jsonSearch" placeholder="Search in JSON...">
+                <button id="searchNextButton">Next</button>
+                <button id="searchPrevButton">Prev</button>
+            </div>
+            
+            <div id="jsonTreeViewer" class="json-tree-viewer"></div>
+            <pre id="resultsData" class="hidden"></pre>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/accordion.js"></script>
+    <script src="js/form-handler.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/json-viewer.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/debug.js"></script>
+    <script>
+    function switchTab(tabId, button) {
+        // Hide all tab contents
+        document.querySelectorAll('.main-tab-content').forEach(function(content) {
+            content.classList.remove('active');
+        });
+        
+        // Remove active class from all buttons
+        document.querySelectorAll('.main-tab-button').forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+        
+        // Show the selected tab content
+        document.getElementById(tabId).classList.add('active');
+        
+        // Add active class to the clicked button
+        button.classList.add('active');
+    }
+    </script>
+</body>
+</html>

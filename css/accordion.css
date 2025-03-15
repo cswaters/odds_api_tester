@@ -1,0 +1,52 @@
+/* Accordion Styles */
+.accordion {
+    background-color: var(--light-gray);
+    color: var(--dark-gray);
+    cursor: pointer;
+    padding: 12px 15px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+    margin-bottom: 1px;
+    font-weight: 500;
+    position: relative;
+}
+
+.accordion:after {
+    content: '\002B';
+    color: var(--dark-gray);
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+
+.accordion.active:after {
+    content: "\2212";
+}
+
+.accordion:hover, .accordion.active {
+    background-color: var(--medium-gray);
+}
+
+.panel {
+    padding: 0 15px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    border-left: 1px solid var(--medium-gray);
+    border-right: 1px solid var(--medium-gray);
+    border-bottom: 1px solid var(--medium-gray);
+    margin-bottom: 10px;
+}
+
+.panel .market-checkbox {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.panel .market-checkbox:last-child {
+    border-bottom: none;
+} 
